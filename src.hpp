@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -440,4 +441,3 @@ public:
 const std::vector<std::string> Pokedex::VALID_TYPES = {
     "normal", "fire", "water", "grass", "electric", "ice", "flying"
 };
-
