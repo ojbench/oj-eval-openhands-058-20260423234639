@@ -50,10 +50,8 @@ private:
     std::vector<Pokemon> pokemons;
     std::string fileName;
     
-    // Valid types for validation
     static const std::vector<std::string> VALID_TYPES;
     
-    // Helper function to validate Pokemon name
     bool isValidName(const char *name) const {
         if (!name || strlen(name) == 0 || strlen(name) > 10) return false;
         for (size_t i = 0; i < strlen(name); i++) {
@@ -62,12 +60,10 @@ private:
         return true;
     }
     
-    // Helper function to validate type
     bool isValidType(const std::string &type) const {
         return std::find(VALID_TYPES.begin(), VALID_TYPES.end(), type) != VALID_TYPES.end();
     }
     
-    // Helper function to parse types string
     std::vector<std::string> parseTypes(const char *types) const {
         std::vector<std::string> result;
         std::string str(types);
@@ -80,7 +76,6 @@ private:
         return result;
     }
     
-    // Helper function to find Pokemon by id
     int findPokemonIndex(int id) const {
         for (size_t i = 0; i < pokemons.size(); i++) {
             if (pokemons[i].id == id) return i;
@@ -88,14 +83,11 @@ private:
         return -1;
     }
     
-    // Helper function to get damage multiplier
     float getDamageMultiplier(const std::string &attackType, const std::string &defendType) const {
-        // Normal type
         if (attackType == "normal") {
             return 1.0f;
         }
         
-        // Fire type
         if (attackType == "fire") {
             if (defendType == "grass") return 2.0f;
             if (defendType == "ice") return 2.0f;
@@ -103,7 +95,6 @@ private:
             if (defendType == "fire") return 0.5f;
         }
         
-        // Water type
         if (attackType == "water") {
             if (defendType == "fire") return 2.0f;
             if (defendType == "ground") return 2.0f;
@@ -111,7 +102,6 @@ private:
             if (defendType == "grass") return 0.5f;
         }
         
-        // Grass type
         if (attackType == "grass") {
             if (defendType == "water") return 2.0f;
             if (defendType == "ground") return 2.0f;
@@ -120,7 +110,6 @@ private:
             if (defendType == "flying") return 0.5f;
         }
         
-        // Electric type
         if (attackType == "electric") {
             if (defendType == "water") return 2.0f;
             if (defendType == "flying") return 2.0f;
@@ -129,7 +118,6 @@ private:
             if (defendType == "ground") return 0.0f;
         }
         
-        // Ice type
         if (attackType == "ice") {
             if (defendType == "grass") return 2.0f;
             if (defendType == "ground") return 2.0f;
@@ -139,7 +127,6 @@ private:
             if (defendType == "ice") return 0.5f;
         }
         
-        // Flying type
         if (attackType == "flying") {
             if (defendType == "grass") return 2.0f;
             if (defendType == "ground") return 2.0f;
@@ -149,7 +136,6 @@ private:
         return 1.0f;
     }
     
-    // Helper function to sort pokemons by id
     void sortPokemons() {
         std::sort(pokemons.begin(), pokemons.end(), 
                   [](const Pokemon &a, const Pokemon &b) { return a.id < b.id; });
@@ -157,7 +143,6 @@ private:
 
 public:
     explicit Pokedex(const char *_fileName) : fileName(_fileName) {
-        // Load data from file
         std::ifstream file(fileName);
         if (file.is_open()) {
             std::string line;
@@ -179,7 +164,6 @@ public:
     }
 
     ~Pokedex() {
-        // Save data to file
         std::ofstream file(fileName);
         if (file.is_open()) {
             for (const auto &pokemon : pokemons) {
@@ -195,7 +179,6 @@ public:
     }
 
     bool pokeAdd(const char *name, int id, const char *types) {
-        // Validate arguments
         if (!isValidName(name)) {
             throw ArgumentException(("Argument Error: PM Name Invalid (" + std::string(name) + ")").c_str());
         }
@@ -215,12 +198,10 @@ public:
             throw ArgumentException("Argument Error: PM Type Invalid (empty or too many types)");
         }
         
-        // Check if Pokemon with same id already exists
         if (findPokemonIndex(id) != -1) {
             return false;
         }
         
-        // Add new Pokemon
         pokemons.emplace_back(name, id, typeList);
         sortPokemons();
         return true;
@@ -248,7 +229,6 @@ public:
     std::string typeFind(const char *types) const {
         std::vector<std::string> searchTypes = parseTypes(types);
         
-        // Validate search types
         for (const auto &type : searchTypes) {
             if (!isValidType(type)) {
                 throw ArgumentException(("Argument Error: PM Type Invalid (" + type + ")").c_str());
@@ -317,7 +297,6 @@ public:
             return 0;
         }
         
-        // Start with the Pokemon with smallest id
         std::vector<Pokemon> owned = {pokemons[0]};
         std::vector<bool> captured(pokemons.size(), false);
         captured[0] = true;
@@ -331,11 +310,9 @@ public:
                 
                 const Pokemon &wild = pokemons[i];
                 
-                // Check if any owned Pokemon can capture this wild Pokemon
                 for (const Pokemon &trainer : owned) {
                     bool canCapture = false;
                     
-                    // Try each type of the trainer's Pokemon
                     for (const auto &attackType : trainer.types) {
                         float damage = 1.0f;
                         for (const auto &defendType : wild.types) {
@@ -437,7 +414,7 @@ public:
     }
 };
 
-// Static member definition
 const std::vector<std::string> Pokedex::VALID_TYPES = {
     "normal", "fire", "water", "grass", "electric", "ice", "flying"
 };
+
